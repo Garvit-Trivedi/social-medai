@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { apiRequest } from "../lib/api";
+import signupImage from "../assets/login.png";
+import AuthWrapper from "../components/AuthWrapper";
+
+export default function Signup() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const onChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await apiRequest("/api/auth/signup", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+
+      localStorage.setItem("token", res.token);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AuthWrapper>
+      <div className="w-[800px] bg-black border border-white rounded-2xl overflow-hidden flex text-white shadow-xl">
+
+        {/* LEFT IMAGE */}
+        <div className="w-1/2">
+          <img src={signupImage} className="w-full h-full object-cover" />
+        </div>
+
+        {/* RIGHT FORM */}
+        <div className="w-1/2 p-10 flex flex-col justify-center">
+          <h1 className="text-3xl font-semibold mb-6 text-white">Create Account</h1>
+
+          {error && <div className="mb-3 text-sm text-red-400">{error}</div>}
+
+          <form onSubmit={onSubmit} className="space-y-5">
+
+            <div>
+              <label className="block text-sm mb-1 text-gray-300">Username</label>
+              <input
+                className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-2.5 outline-none"
+                type="text"
+                name="username"
+                required
+                value={form.username}
+                onChange={onChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1 text-gray-300">Email</label>
+              <input
+                className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-2.5 outline-none"
+                type="email"
+                name="email"
+                required
+                value={form.email}
+                onChange={onChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1 text-gray-300">Password</label>
+              <input
+                className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-2.5 outline-none"
+                type="password"
+                name="password"
+                required
+                value={form.password}
+                onChange={onChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1 text-gray-300">Confirm Password</label>
+              <input
+                className="w-full rounded-md bg-white/10 border border-white/20 px-4 py-2.5 outline-none"
+                type="password"
+                name="confirmPassword"
+                required
+                value={form.confirmPassword}
+                onChange={onChange}
+              />
+            </div>
+
+            <button
+              disabled={loading}
+              className="w-full py-2.5 rounded-md font-semibold text-black bg-white hover:bg-gray-300 transition"
+            >
+              {loading ? "Creating..." : "Sign Up"}
+            </button>
+
+          </form>
+
+          <p className="mt-5 text-sm text-gray-400 text-center">
+            Already have an account?{" "}
+            <Link className="underline text-white" to="/login" state={{ dir: -1 }}>
+              Log in
+            </Link>
+          </p>
+        </div>
+
+      </div>
+    </AuthWrapper>
+  );
+}

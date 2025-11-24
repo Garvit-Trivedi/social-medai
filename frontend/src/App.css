@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* Neon theme helper classes & animations (add to global css) */
+
+@keyframes avatarPop {
+  0% { transform: scale(.6) translateY(8px); opacity: 0; }
+  60% { transform: scale(1.05) translateY(-2px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.animate-avatarPop { animation: avatarPop .6s cubic-bezier(.2,.9,.3,1); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInUp { animation: fadeInUp .6s ease-out; }
+
+/* Shadows */
+.shadow-neon {
+  box-shadow: 0 6px 24px -10px rgba(123, 92, 255, .35), inset 0 -1px 0 rgba(255,255,255,0.02);
+}
+.shadow-neon-lg {
+  box-shadow: 0 20px 60px -25px rgba(123, 92, 255, .45), 0 6px 24px -10px rgba(0, 210, 255, .06);
+}
+.shadow-neon-sm {
+  box-shadow: 0 6px 22px -12px rgba(167, 132, 255, .35);
+}
+
+/* Card shadows */
+.shadow-card {
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.02);
+}
+.shadow-card-lg {
+  box-shadow: 0 18px 50px -25px rgba(0,0,0,0.6);
+}
+
+/* subtle glow */
+.border-glow {
+  box-shadow: 0 0 20px -8px rgba(127, 90, 255, .45);
+}
+
+/* utility gradient background fallback */
+.bg-neon-plate {
+  background: linear-gradient(135deg, rgba(123,92,255,0.08), rgba(110,231,255,0.03));
+}
+
+/* small helper for hover lift */
+.transition-transform {
+  transition: transform .22s ease, box-shadow .22s ease;
+}
