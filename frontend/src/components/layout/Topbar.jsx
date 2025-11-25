@@ -25,7 +25,7 @@ export default function Topbar({ onLogout, onProfile, onCompose, avatarSrc }) {
   }, []);
 
   return (
-    <header className="h-16 flex items-center justify-between px-6 border-b border-black/20 bg-[#0b0b0b] text-[#EEECF1] shadow-md">
+    <header className="navbar h-16 flex items-center justify-between px-6 text-[#EEECF1]">
       <div className="text-xl font-bold tracking-wide text-purple-500 select-none">
         Pulse
       </div>
@@ -58,7 +58,7 @@ export default function Topbar({ onLogout, onProfile, onCompose, avatarSrc }) {
           <div
             ref={menuRef}
             role="menu"
-            className="absolute right-2 sm:right-6 top-16 z-50 w-44 bg-[#1c1e22] text-[#EEECF1] rounded-lg shadow-2xl border border-black/30 overflow-hidden animate-fadeIn"
+            className="absolute right-2 sm:right-6 top-16 z-50 w-44 panel text-[#EEECF1] overflow-hidden soft-fade"
           >
             <button
               role="menuitem"
@@ -84,6 +84,7 @@ export default function Topbar({ onLogout, onProfile, onCompose, avatarSrc }) {
           </div>
         )}
       </div>
+      <div className="navbar-underline" />
     </header>
   );
 }

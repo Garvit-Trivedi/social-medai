@@ -7,6 +7,16 @@ import Block from '../models/Block.js';
 
 const router = Router();
 
+// GET /api/users/all - list a limited set of users
+router.get('/all', auth, async (req, res) => {
+  const users = await User.find({})
+    .select('_id username avatarUrl displayName')
+    .sort({ createdAt: -1 })
+    .limit(100)
+    .lean();
+  res.json({ users });
+});
+
 // POST /api/users/:id/follow
 router.post('/:id/follow', auth, async (req, res) => {
   if (req.params.id === req.user.id) return res.status(400).json({ message: 'Cannot follow yourself' });

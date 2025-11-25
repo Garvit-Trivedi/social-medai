@@ -42,7 +42,7 @@ export default function Dashboard() {
 
   const logout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
   const [feed, setFeed] = useState([]);
@@ -134,7 +134,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="h-screen bg-[#0b0b0b] text-[#EEECF1]">
+    <div className="app-shell">
       <Topbar onLogout={logout} onProfile={() => navigate('/dashboard/profile')} onCompose={() => navigate('/dashboard/compose')} avatarSrc={avatarSrc} />
       {/* Content area fills the remaining viewport height (64px topbar) and prevents body scroll */}
       <div

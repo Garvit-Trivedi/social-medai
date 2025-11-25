@@ -45,15 +45,15 @@ export default function Signup() {
 
   return (
     <AuthWrapper>
-      <div className="w-[800px] bg-black border border-white rounded-2xl overflow-hidden flex text-white shadow-xl">
+      <div className="w-full max-w-[800px] glass rounded-2xl overflow-hidden flex flex-col md:flex-row text-white shadow-xl">
 
         {/* LEFT IMAGE */}
-        <div className="w-1/2">
-          <img src={signupImage} className="w-full h-full object-cover" />
+        <div className="hidden md:block md:w-1/2">
+          <img src={signupImage} className="w-full h-full object-cover" alt="Signup visual" />
         </div>
 
         {/* RIGHT FORM */}
-        <div className="w-1/2 p-10 flex flex-col justify-center">
+        <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
           <h1 className="text-3xl font-semibold mb-6 text-white">Create Account</h1>
 
           {error && <div className="mb-3 text-sm text-red-400">{error}</div>}

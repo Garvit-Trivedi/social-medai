@@ -313,14 +313,7 @@ export default function PostCard({
 
   return (
     <article
-      className="
-        relative rounded-2xl p-5 
-        bg-white/5 backdrop-blur-xl 
-        border border-purple-500/20 shadow-xl 
-        overflow-hidden
-        transition-all duration-300
-        hover:border-purple-500/50 hover:shadow-purple-500/20
-      "
+      className="card card-lg relative p-5 overflow-hidden"
       aria-label={`Post by ${post.user.username}`}
     >
       {/* Header */}
@@ -393,40 +386,23 @@ export default function PostCard({
       </div>
 
       {/* Actions */}
-      <div className="mt-4 flex items-center gap-4 flex-wrap">
+      <div className="mt-4 flex items-center gap-3 flex-wrap">
         {/* Like */}
-        <button
-          onClick={toggleLike}
-          className={`flex items-center gap-1 px-3 py-1.5 rounded-full backdrop-blur transition-all duration-300 ${
-            liked
-              ? 'text-purple-400 bg-purple-400/10 shadow-purple-500/20'
-              : 'text-white/80 hover:bg-white/5'
-          }`}
-        >
-          ♥ <span className="text-sm">Like</span>
+        <button onClick={toggleLike} className={`icon-btn ${liked ? 'active' : ''}`}>
+          <span className="icon">♥</span>
+          <span className="text-sm">Like</span>
         </button>
 
         {/* Comment */}
-        <button
-          onClick={() => {
-            setShowComments((v) => !v);
-            document.getElementById(`cmt-${post.id}`)?.focus();
-          }}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-full text-white/80 hover:bg-white/5 backdrop-blur"
-        >
-          💬 <span className="text-sm">Comment</span>
+        <button onClick={() => { setShowComments((v) => !v); document.getElementById(`cmt-${post.id}`)?.focus(); }} className="icon-btn">
+          <span className="icon">💬</span>
+          <span className="text-sm">Comment</span>
         </button>
 
         {/* Save */}
-        <button
-          onClick={toggleSave}
-          className={`flex items-center gap-1 px-3 py-1.5 rounded-full backdrop-blur transition-all duration-300 ${
-            saved
-              ? 'text-purple-400 bg-purple-400/10 shadow-purple-500/20'
-              : 'text-white/80 hover:bg-white/5'
-          }`}
-        >
-          🔖 <span className="text-sm">Save</span>
+        <button onClick={toggleSave} className={`icon-btn ${saved ? 'active' : ''}`}>
+          <span className="icon">🔖</span>
+          <span className="text-sm">Save</span>
         </button>
 
         <div className="ml-auto text-xs text-gray-400">
@@ -442,11 +418,7 @@ export default function PostCard({
           onChange={(e) => setComment(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submitComment()}
           placeholder="Add a comment…"
-          className="
-            w-full rounded-full px-4 py-2 bg-white/10 
-            text-sm text-white placeholder-gray-400
-            backdrop-blur focus:ring-2 focus:ring-purple-500/40
-          "
+          className="input"
         />
       </div>
 

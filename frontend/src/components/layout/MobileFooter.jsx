@@ -37,7 +37,7 @@ export default function MobileFooter() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 h-14 bg-[#1c1e22] border-t border-black/20 grid grid-cols-5 md:hidden z-40"
+      className="mobile-nav grid grid-cols-5 md:hidden z-40"
       aria-label="Bottom navigation"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
@@ -48,13 +48,14 @@ export default function MobileFooter() {
             key={b.label}
             aria-label={b.label}
             onClick={() => navigate(b.to)}
-            className={`text-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#A28DB9]/40 ${
-              active ? 'text-purple-400' : 'text-white'
-            }`}
+            className={`icon-btn justify-center ${active ? 'active' : ''}`}
           >
-            <span aria-hidden>{b.icon}</span>
+            <span aria-hidden className="icon text-lg">{b.icon}</span>
             {b.badge > 0 && (
-              <span className="ml-1 text-[10px] rounded-full bg-[#A28DB9]/20 text-[#A28DB9] px-1.5 py-0.5">
+              <span className="ml-1 text-[10px] rounded-full px-1.5 py-0.5" style={{
+                background: 'color-mix(in srgb, var(--accent), transparent 85%)',
+                color: 'var(--accent)'
+              }}>
                 {b.badge}
               </span>
             )}
