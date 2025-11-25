@@ -21,9 +21,26 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/socialmedai_db';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+// Support multiple allowed origins via comma-separated env `CORS_ORIGINS`
+const CORS_ORIGINS = (process.env.CORS_ORIGINS || CORS_ORIGIN)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    // Allow non-browser or same-origin requests with no Origin header
+    if (!origin) return callback(null, true);
+    if (CORS_ORIGINS.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS: Origin ${origin} not allowed`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 // Middleware
-app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
+app.use(cors(corsOptions));
 app.use(express.json());
 // static uploads
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
@@ -62,7 +79,12 @@ app.use((err, req, res, next) => {
 // Socket.IO
 import { Server as IOServer } from 'socket.io';
 const io = new IOServer(server, {
-  cors: { origin: CORS_ORIGIN, credentials: true },
+  cors: {
+    origin: CORS_ORIGINS,
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  },
 });
 app.set('io', io);
 

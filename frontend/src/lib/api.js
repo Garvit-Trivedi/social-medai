@@ -12,8 +12,13 @@ export async function apiRequest(path, options = {}) {
   const body = options.body && !isForm && typeof options.body !== 'string'
     ? JSON.stringify(options.body)
     : options.body;
-
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers, body });
+  // Ensure cross-origin requests are made in CORS mode explicitly.
+  const res = await fetch(`${API_URL}${path}`, {
+    mode: 'cors',
+    ...options,
+    headers,
+    body,
+  });
   const isJson = res.headers.get('content-type')?.includes('application/json');
   const data = isJson ? await res.json() : null;
   if (!res.ok) {
