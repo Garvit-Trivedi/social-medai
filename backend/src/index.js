@@ -20,7 +20,7 @@ const server = http.createServer(app);
 // Config
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/socialmedai_db';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+const CORS_ORIGIN =process.env.CORS_ORIGINS  
 // Support multiple allowed origins via comma-separated env `CORS_ORIGINS`
 const CORS_ORIGINS = (process.env.CORS_ORIGINS || CORS_ORIGIN)
   .split(',')
