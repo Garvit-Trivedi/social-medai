@@ -4,6 +4,27 @@ import { apiRequest } from "../lib/api";
 import authImage from "../assets/login.png";
 import AuthWrapper from "../components/AuthWrapper";
 
+
+function Input({ label, name, type = "text", value, onChange, required = true }) {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm text-gray-300">
+        {label}
+      </label>
+      <input
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        required={required}
+        className="w-full rounded-lg bg-white/5 border border-white/10
+                   px-3 py-2.5 text-white outline-none
+                   focus:border-purple-400 focus:ring-1 focus:ring-purple-400
+                   transition"
+      />
+    </div>
+  );  
+}
 export default function Auth() {
   const navigate = useNavigate();
   const [mode, setMode] = useState("login"); // login | signup
@@ -49,6 +70,7 @@ export default function Auth() {
                   username: form.username,
                   email: form.email,
                   password: form.password,
+                  confirmPassword: form.confirmPassword,
                 }
               : {
                   email: form.email,
@@ -76,16 +98,16 @@ export default function Auth() {
       <div className="auth-grid" />
     </div>
 
-    <div className="relative w-full max-w-[1040px] mx-auto glass rounded-[32px] overflow-hidden shadow-2xl flex flex-col md:flex-row">
+    <div className="relative w-full max-w-4xl mx-auto glass rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
 
       {/* ===== LEFT VISUAL (lighter presence) ===== */}
-      <div className="hidden md:flex md:w-[46%] relative items-center">
+      <div className="hidden lg:flex lg:w-[45%] relative items-center">
         <img
           src={authImage}
           alt="Auth visual"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-800/40 via-black/30 to-red-800/40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-800/40 via-purple/30 to-red-800/40" />
 
         <div className="relative z-10 px-14">
           <h2 className="text-4xl font-bold leading-tight">
@@ -101,15 +123,15 @@ export default function Auth() {
       </div>
 
       {/* ===== FORM PANEL ===== */}
-      <div className="w-full md:w-[54%] px-8 py-12 md:px-16 md:py-16 text-white">
+      <div className="w-full md:w-[54%] px-6 py-8 sm:px-10 sm:py-10 md:px-14 md:py-12 text-white">
 
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold tracking-tight">
             {isSignup ? "Create your account" : "Log in to Pulse"}
           </h1>
 
-          <p className="mt-3 text-gray-400 text-base leading-relaxed max-w-md">
+          <p className="mt-2 text-gray-400 text-base leading-relaxed max-w-md">
             {isSignup
               ? "Set up your profile in under a minute. No pressure, no noise."
               : "Welcome back — let’s get you where you left off."}
@@ -124,7 +146,7 @@ export default function Auth() {
         )}
 
         {/* Form */}
-        <form onSubmit={onSubmit} className="space-y-7">
+        <form onSubmit={onSubmit} className="space-y-5">
 
           {/* Username (animated space, not cramped) */}
           <div
@@ -137,6 +159,7 @@ export default function Auth() {
               name="username"
               value={form.username}
               onChange={onChange}
+              required={isSignup}
             />
           </div>
 
@@ -168,6 +191,7 @@ export default function Auth() {
               type="password"
               value={form.confirmPassword}
               onChange={onChange}
+              required={isSignup}
             />
           </div>
           
@@ -176,7 +200,7 @@ export default function Auth() {
           <div className="pt-4">
             <button
               disabled={loading}
-              className="w-full py-3.5 rounded-lg font-semibold text-black
+              className="w-full py-2.5 text-sm rounded-lg font-semibold text-black
                          bg-gradient-to-r from-purple-400 to-red-400
                          hover:brightness-110 transition disabled:opacity-60"
             >
@@ -192,7 +216,7 @@ export default function Auth() {
         </form>
 
         {/* Switch */}
-        <div className="mt-10 pt-6 border-t border-white/10 text-center">
+        <div className="mt-6 border-t border-white/10 text-center">
           <p className="text-sm text-gray-400">
             {isSignup ? "Already have an account?" : "Don’t have an account?"}{" "}
             <button
