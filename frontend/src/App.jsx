@@ -1,7 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing.jsx'
-import Login from './pages/Login.jsx'
-import Signup from './pages/Signup.jsx'
+// import Login from './pages/Login.jsx'
+// import Signup from './pages/Signup.jsx'
+import Auth from './pages/Auth.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Profile from './pages/Profile.jsx'
@@ -39,8 +40,9 @@ export default function App() {
       {/* Auth route animations */}
     <AnimatePresence mode="wait">
    <Routes location={location} key={location.pathname}>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+     <Route path="/login" element={<Auth />} />
+<Route path="/signup" element={<Auth />} />
+
    </Routes>
 </AnimatePresence>
 
