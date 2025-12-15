@@ -22,7 +22,25 @@ A full‑stack social media prototype with a modern React + Vite frontend and a 
 - **Backend**: Node.js, Express, MongoDB/Mongoose, Socket.IO, Multer, Sharp, JWT, express-validator, CORS
 
 ---
-
+## High-Level Architecture
+```
+React (Vite)
+ ├── Protected Routes
+ ├── REST API calls (JWT)
+ ├── WebSockets (DMs, typing)
+ │
+Node.js / Express
+ ├── Auth & Privacy Rules
+ ├── Media Processing
+ ├── REST APIs
+ │
+MongoDB
+ ├── Users
+ ├── Posts
+ ├── Messages
+ └── Social Graph
+`
+```
 ## 📂 Project Structure
 ```
 .
@@ -124,22 +142,6 @@ Frontend (`frontend/package.json`):
 
 ---
 
-## 📸 Screenshots
-Add screenshots/GIFs to showcase the UI:
-```
-assets/
-  dashboard.png
-  profile.png
-  messages.gif
-```
-Then reference them here.
-
----
-
-## 📃 License
-This project is for educational/demo purposes. Add a license if you plan to release it publicly.
-
----
 
 ## 🤝 Contributing
 - Fork the repo and create a feature branch.
@@ -148,6 +150,4 @@ This project is for educational/demo purposes. Add a license if you plan to rele
 
 ---
 
-## Links
-- Frontend details: `frontend/README.md`
-- Backend quickstart: `backend/README.md`
+
