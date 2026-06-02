@@ -20,23 +20,27 @@ const server = http.createServer(app);
 // Config
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/socialmedai_db';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
-// Support multiple allowed origins via comma-separated env `CORS_ORIGINS`
-const CORS_ORIGINS = (process.env.CORS_ORIGINS || CORS_ORIGIN)
+const CORS_ORIGINS = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || 'http://localhost:5173')
   .split(',')
-  .map((s) => s.trim())
+  .map((s) => s.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 const corsOptions = {
   origin(origin, callback) {
     // Allow non-browser or same-origin requests with no Origin header
     if (!origin) return callback(null, true);
-    if (CORS_ORIGINS.includes(origin)) return callback(null, true);
-    return callback(new Error(`CORS: Origin ${origin} not allowed`));
+    
+    if (CORS_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Pass false instead of an Error so Express doesn't crash with a 500 error 
+    // and instead safely blocks the request (omitting the CORS headers).
+    return callback(null, false);
   },
-  credentials: true,
+  credentials: true, // Crucial for cookies/authorization headers
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 };
 
 // Middleware

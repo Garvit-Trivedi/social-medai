@@ -24,6 +24,9 @@
 
 Unlike generic platforms, Pulse prioritizes visual craft, offering a "nocturnal" aesthetic that matches the creative energy of photographers, digital artists, and filmmakers.
 
+## backend deploy link -
+https://social-medai-2lqa.onrender.com
+
 ---
 
 ## 📸 Screenshots
