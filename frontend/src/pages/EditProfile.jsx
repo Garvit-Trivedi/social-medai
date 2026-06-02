@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
+import AppLayout from '../components/layout/AppLayout';
 
 function useDebouncedValue(value, delay = 400) {
   const [v, setV] = useState(value);
@@ -17,7 +18,7 @@ export default function EditProfile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [usernameState, setUsernameState] = useState('idle'); // idle|checking|ok|taken|invalid
+  const [usernameState, setUsernameState] = useState('idle'); 
 
   const debouncedUsername = useDebouncedValue(form.username);
 
@@ -74,65 +75,106 @@ export default function EditProfile() {
     return usernameState === 'checking' ? 'Checking…' : usernameState === 'ok' ? 'Available' : usernameState === 'taken' ? 'Taken' : usernameState === 'invalid' ? '3–30 chars, letters/numbers/_' : '';
   }, [usernameState]);
 
-  if (loading) return <div className="min-h-screen bg-[#0b0b0b] text-[#EEECF1] grid place-items-center">Loading…</div>;
+  if (loading) return <div className="min-h-screen bg-[#0b0f14] text-white grid place-items-center">Loading…</div>;
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-[#EEECF1]">
-      <div className="max-w-[720px] mx-auto px-4 py-6">
-        <h1 className="text-xl font-semibold mb-4">Edit Profile</h1>
-        {error && <div className="mb-3 text-sm text-red-400">{error}</div>}
-        <form onSubmit={onSubmit} className="bg-[#1c1e22] border border-black/30 rounded-lg p-4 space-y-4">
-          <div>
-            <label className="block text-sm mb-1">Display Name</label>
-            <input className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.displayName} onChange={(e)=>setForm({...form, displayName:e.target.value})} />
+    <AppLayout>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-extrabold text-white">Identity</h1>
+          <p className="mt-2 text-gray-500 font-medium">Refine how you appear in the Pulse ecosystem.</p>
+        </div>
+
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-400 font-medium">
+            {error}
           </div>
-          <div>
-            <label className="block text-sm mb-1">Username</label>
-            <input className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.username} onChange={(e)=>setForm({...form, username:e.target.value})} />
-            <div className={`mt-1 text-xs ${usernameState==='ok'?'text-green-400':usernameState==='taken'?'text-red-400':'text-[#bfb9c5]'}`}>{usernameHint}</div>
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Bio</label>
-            <textarea maxLength={150} className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.bio} onChange={(e)=>setForm({...form, bio:e.target.value})} />
-            <div className="text-xs text-[#9aa5b1]">{form.bio.length}/150</div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm mb-1">Website</label>
-              <input placeholder="https://example.com" className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.website} onChange={(e)=>setForm({...form, website:e.target.value})} />
+        )}
+
+        <form onSubmit={onSubmit} className="bg-[#0f161b] rounded-3xl border border-white/5 p-6 md:p-10 shadow-2xl space-y-8 transition-all hover:border-white/10">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#52606d]">Display Name</label>
+              <input 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50" 
+                value={form.displayName} 
+                onChange={(e)=>setForm({...form, displayName:e.target.value})} 
+              />
             </div>
-            <div>
-              <label className="block text-sm mb-1">Location</label>
-              <input className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.location} onChange={(e)=>setForm({...form, location:e.target.value})} />
-            </div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm mb-1">Pronouns</label>
-              <input className="w-full rounded-md bg-[#0b0b0b] border border-black/40 px-3 py-2" value={form.pronouns} onChange={(e)=>setForm({...form, pronouns:e.target.value})} />
-            </div>
-            <div className="flex items-center gap-2 mt-6">
-              <input id="priv" type="checkbox" checked={form.isPrivate} onChange={(e)=>setForm({...form, isPrivate:e.target.checked})} />
-              <label htmlFor="priv" className="text-sm">Private Account</label>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#52606d]">Username</label>
+              <input 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50" 
+                value={form.username} 
+                onChange={(e)=>setForm({...form, username:e.target.value})} 
+              />
+              <div className={`text-[10px] uppercase tracking-tighter font-bold ${usernameState==='ok'?'text-green-400':usernameState==='taken'?'text-red-400':'text-gray-600'}`}>{usernameHint}</div>
             </div>
           </div>
-          <fieldset className="border border-black/30 rounded-md p-3">
-            <legend className="px-1 text-sm">Notifications</legend>
-            <div className="grid sm:grid-cols-2 gap-2 text-sm">
-              {['likes','comments','follows','messages'].map((k)=> (
-                <label key={k} className="flex items-center gap-2">
-                  <input type="checkbox" checked={!!form.notifications[k]} onChange={(e)=>setForm({...form, notifications:{...form.notifications, [k]: e.target.checked}})} />
-                  <span className="capitalize">{k}</span>
-                </label>
-              ))}
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-[#52606d]">Biography</label>
+            <textarea 
+              maxLength={150} 
+              className="w-full h-24 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50 resize-none" 
+              value={form.bio} 
+              onChange={(e)=>setForm({...form, bio:e.target.value})} 
+            />
+            <div className="text-right text-[10px] text-gray-600 font-bold">{form.bio.length}/150</div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#52606d]">Website</label>
+              <input 
+                placeholder="https://yourspace.com" 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50" 
+                value={form.website} 
+                onChange={(e)=>setForm({...form, website:e.target.value})} 
+              />
             </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-[#52606d]">Location</label>
+              <input 
+                placeholder="The Matrix"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-purple-500/50" 
+                value={form.location} 
+                onChange={(e)=>setForm({...form, location:e.target.value})} 
+              />
+            </div>
+          </div>
+
+          <fieldset className="p-6 rounded-2xl bg-black/20 border border-white/5">
+             <legend className="px-2 text-[10px] font-extrabold uppercase tracking-[0.3em] text-purple-400 mb-4">Notification Hooks</legend>
+             <div className="grid grid-cols-2 gap-4">
+                {['likes','comments','follows','messages'].map(k => (
+                  <label key={k} className="flex items-center gap-3 cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded bg-purple-500 border-none"
+                      checked={!!form.notifications[k]} 
+                      onChange={(e)=>setForm({...form, notifications:{...form.notifications, [k]: e.target.checked}})} 
+                    />
+                    <span className="text-xs font-bold text-gray-500 group-hover:text-gray-300 capitalize">{k}</span>
+                  </label>
+                ))}
+             </div>
           </fieldset>
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={()=>navigate('/dashboard/profile')} className="px-4 py-2 rounded-md border border-black/40">Cancel</button>
-            <button disabled={saving} className="px-4 py-2 rounded-md bg-[#A28DB9] text-black font-medium">{saving?'Saving…':'Save'}</button>
+
+          <div className="flex gap-4 pt-4">
+            <button 
+              onClick={onSubmit}
+              disabled={saving}
+              className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-[#b76bff] to-[#ff6b6b] text-black font-extrabold shadow-lg hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+            >
+              {saving ? "SAVING..." : "SAVE CHANGES"}
+            </button>
+            <button type="button" onClick={()=>navigate('/dashboard/profile')} className="px-8 py-4 rounded-2xl bg-white/5 text-xs font-bold hover:bg-white/10 transition-all">Cancel</button>
           </div>
         </form>
       </div>
-    </div>
+    </AppLayout>
   );
 }

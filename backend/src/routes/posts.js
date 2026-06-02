@@ -61,17 +61,30 @@ router.post(
   ],
   async (req, res) => {
     if (!validate(req, res)) return;
-    if (!req.files?.length) return res.status(400).json({ message: 'No media uploaded' });
+
+    const supabaseUrls = req.body.supabaseUrls ? JSON.parse(req.body.supabaseUrls) : null;
+
+    if (!req.files?.length && !supabaseUrls) {
+      return res.status(400).json({ message: 'No media uploaded' });
+    }
 
     // Determine if images or video
-    const first = req.files[0];
-    const isImage = first.mimetype.startsWith('image/');
-    const isVideo = first.mimetype.startsWith('video/');
-    if (isImage && req.files.some((f) => f.mimetype.startsWith('video/'))) {
-      return res.status(400).json({ message: 'Cannot mix images and video' });
+    let isImage, isVideo;
+    if (supabaseUrls && supabaseUrls.length > 0) {
+      // For URLs, we infer type from the first file in the files array (if present) 
+      // or assume based on extension or just treat as images for now.
+      // Frontend sends consistent types.
+      const isVideoFile = req.files?.[0]?.mimetype.startsWith('video/') || false;
+      isImage = !isVideoFile;
+      isVideo = isVideoFile;
+    } else {
+      const first = req.files[0];
+      isImage = first.mimetype.startsWith('image/');
+      isVideo = first.mimetype.startsWith('video/');
     }
-    if (isImage && req.files.length > 4) {
-      return res.status(400).json({ message: 'Maximum 4 images allowed' });
+
+    if (isImage && !supabaseUrls && req.files.some((f) => f.mimetype.startsWith('video/'))) {
+      return res.status(400).json({ message: 'Cannot mix images and video' });
     }
 
     const payload = {
@@ -86,7 +99,13 @@ router.post(
     };
 
     try {
-      if (isImage) {
+      if (supabaseUrls && supabaseUrls.length > 0) {
+        if (isImage) {
+          supabaseUrls.forEach(url => payload.images.push({ url }));
+        } else {
+          payload.video = { url: supabaseUrls[0] };
+        }
+      } else if (isImage) {
         // validate images
         for (const file of req.files) imageFileFilter(null, file, (err) => { if (err) throw err; });
         for (const file of req.files) {
@@ -99,8 +118,8 @@ router.post(
         if (!Number.isFinite(duration) || duration <= 0 || duration > 60) {
           return res.status(400).json({ message: 'Video must be 60 seconds or less' });
         }
-        videoFileFilter(null, first, (err) => { if (err) throw err; });
-        const url = await saveVideo(first);
+        videoFileFilter(null, req.files[0], (err) => { if (err) throw err; });
+        const url = await saveVideo(req.files[0]);
         payload.video = { url };
       } else {
         return res.status(400).json({ message: 'Unsupported media' });

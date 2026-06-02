@@ -10,41 +10,38 @@ export default function Landing() {
     <div className="min-h-screen bg-[#0b0f14] text-[#e6eef3] font-sans">
       
 
-      {/* Top nav (simple) */}
-      <header className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-[#0b0f14]/70 border-b border-white/5">
-  <div className="w-3xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-
-    {/* Left: Logo */}
-    <a href="#" className="  absolute left-8 text-2xl font-bold tracking-tight text-white hover:opacity-90">
-      Pulse
-    </a>
-
-    {/* Center nav (desktop only) */}
-    <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#9aa5b1]">
-      <a href="#features" className="hover:text-white transition">Features</a>
-      <a href="#how" className="hover:text-white transition">How it works</a>
-      <a href="#pro" className="hover:text-white transition">Pulse Pro</a>
-      <a href="#faq" className="hover:text-white transition">FAQ</a>
-    </nav>
-
-    {/* Right: Auth CTAs */}
-    <div className="absolute right-8 flex items-center gap-2">
-      <Link
-        to="/login"
-        className="rounded-lg border border-[#2a323a] px-4 py-2 text-sm font-semibold hover:bg-[#0f161b] focus:outline-none focus:ring-2 focus:ring-white/10"
-      >
-        Log in
+  <header className="sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-[#0b0f14]/70 border-b border-white/5">
+    <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      {/* Left: Logo */}
+      <Link to="/" className="text-2xl font-bold tracking-tight text-white hover:opacity-90">
+        Pulse
       </Link>
-      <Link
-        to="/signup"
-        className="rounded-lg bg-[#ff6b6b] px-4 py-2 text-sm font-semibold text-black shadow-md hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]/40"
-      >
-        Sign up
-      </Link>
+
+      {/* Center nav (desktop only) */}
+      <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#9aa5b1]">
+        <a href="#features" className="hover:text-white transition">Features</a>
+        <a href="#how" className="hover:text-white transition">How it works</a>
+        <a href="#pro" className="hover:text-white transition">Pulse Pro</a>
+        <a href="#faq" className="hover:text-white transition">FAQ</a>
+      </nav>
+
+      {/* Right: Auth CTAs */}
+      <div className="flex items-center gap-3">
+        <Link
+          to="/login"
+          className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold hover:bg-white/5 transition"
+        >
+          Log in
+        </Link>
+        <Link
+          to="/signup"
+          className="hidden sm:block rounded-lg bg-gradient-to-r from-[#ff6b6b] to-[#ff9a8a] px-4 py-2 text-sm font-semibold text-black shadow-md hover:opacity-90 transition"
+        >
+          Sign up
+        </Link>
+      </div>
     </div>
-
-  </div>
-</header>
+  </header>
 {/* Hero */}
 <section id="hero" className="py-16 md:py-24 relative overflow-visible">
   <div className="max-w-6xl mx-auto px-4 md:px-6">

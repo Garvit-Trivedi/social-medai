@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { apiRequest, API_URL } from '../lib/api';
 import { io } from 'socket.io-client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import AppLayout from '../components/layout/AppLayout';
 
 export default function Messages() {
   const [mutuals, setMutuals] = useState([]);
@@ -16,6 +17,13 @@ export default function Messages() {
   const [socket, setSocket] = useState(null);
   const [typingFromOther, setTypingFromOther] = useState(false);
   const typingTimer = useRef(null);
+
+  // For mobile responsiveness: track if we are in "chat" mode or "list" mode
+  const [showChat, setShowChat] = useState(!!otherId);
+
+  useEffect(() => {
+    setShowChat(!!otherId);
+  }, [otherId]);
 
   const loadMutuals = async () => {
     try {
@@ -40,7 +48,6 @@ export default function Messages() {
   useEffect(() => { loadMutuals(); }, []);
   useEffect(() => { loadThread(); }, [otherId]);
 
-  // simple polling every 5s when a chat is selected
   useEffect(() => {
     if (!otherId) return;
     const t = setInterval(loadThread, 5000);
@@ -60,20 +67,17 @@ export default function Messages() {
     }
   };
 
-  // Socket.IO setup
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
     const s = io(API_URL, { auth: { token } });
     setSocket(s);
-    s.on('connect_error', () => {});
     s.on('typing', ({ from, typing }) => {
       if (String(from) === String(otherId)) setTypingFromOther(!!typing);
     });
     return () => { s.disconnect(); };
-  }, []);
+  }, [otherId]);
 
-  // Join room when selecting user
   useEffect(() => {
     if (socket && otherId) socket.emit('join', otherId);
     setTypingFromOther(false);
@@ -89,65 +93,108 @@ export default function Messages() {
     }, 1200);
   };
 
-  return (
-    <div className="min-h-screen bg-[#0b0b0b] text-[#EEECF1]">
-      <div className="mx-auto max-w-[1200px] grid md:grid-cols-[320px_1fr] gap-4 px-4 py-6">
-        <aside className="bg-[#1c1e22] border border-black/30 rounded-lg p-3">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-[15px] font-semibold">Messages</div>
-            <button onClick={()=>navigate('/dashboard')} className="px-2 py-1 rounded-md text-xs border border-black/30">Home</button>
-          </div>
-          <div className="space-y-1">
-            {mutuals.length === 0 && (
-              <div className="text-sm text-[#9aa5b1]">No mutual followers yet.</div>
-            )}
-            {mutuals.map(u => (
-              <button
-                key={u._id}
-                onClick={() => setParams({ u: u._id })}
-                className={`w-full text-left p-2 rounded ${otherId===u._id?'bg-black/30':'hover:bg-black/20'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <img src={u.avatarUrl ? (u.avatarUrl.startsWith('http')?u.avatarUrl:API_URL+u.avatarUrl) : '/avatar.svg'} alt="Avatar" className="w-8 h-8 rounded-full" />
-                  <div>
-                    <div className="text-sm font-medium">{u.displayName || u.username}</div>
-                    <div className="text-xs text-[#9aa5b1]">@{u.username}</div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </aside>
+  const activeUser = mutuals.find(u => u._id === otherId);
 
-        <section className="bg-[#1c1e22] border border-black/30 rounded-lg p-3 min-h-[60vh] flex flex-col">
-          {!otherId ? (
-            <div className="flex-1 grid place-items-center text-[#9aa5b1]">Select a user to start chatting</div>
-          ) : (
-            <>
-              <div className="flex-1 overflow-auto space-y-2 pr-2">
-                {thread.map(m => (
-                  <div key={m._id} className={`max-w-[70%] p-2 rounded ${m.from === otherId ? 'bg-black/20 self-start' : 'bg-[#A28DB9] text-black self-end ml-auto'}`}>
-                    <div className="text-sm whitespace-pre-wrap">{m.text}</div>
-                    <div className="text-[11px] opacity-70 mt-1">{new Date(m.createdAt).toLocaleTimeString()}</div>
+  return (
+    <AppLayout>
+      <div className="h-full flex flex-col max-w-6xl mx-auto md:p-6">
+        <div className="flex-1 flex overflow-hidden glass md:rounded-3xl border border-white/5 shadow-2xl">
+          
+          {/* Chat List (Sidebar) */}
+          <aside className={`${showChat ? 'hidden md:flex' : 'flex'} w-full md:w-[350px] flex-col border-r border-white/5 bg-[#0b0b0b]/40 backdrop-blur-md`}>
+            <div className="p-6 border-b border-white/5">
+              <h2 className="text-xl font-bold tracking-tight text-white">Directs</h2>
+              <p className="text-xs text-gray-500 font-medium tracking-widest uppercase mt-1">Pulse Connect</p>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {mutuals.length === 0 && (
+                <div className="text-center py-10 opacity-40 text-sm">No mutuals found</div>
+              )}
+              {mutuals.map(u => (
+                <button
+                  key={u._id}
+                  onClick={() => setParams({ u: u._id })}
+                  className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-200 ${otherId === u._id ? 'bg-[#ff6b6b] text-black shadow-lg shadow-red-500/20' : 'hover:bg-white/5'}`}
+                >
+                  <img 
+                    src={u.avatarUrl ? (u.avatarUrl.startsWith('http')?u.avatarUrl:API_URL+u.avatarUrl) : '/avatar.svg'} 
+                    className={`w-12 h-12 rounded-2xl object-cover border-2 ${otherId === u._id ? 'border-black/20' : 'border-white/10'}`} 
+                    alt="User" 
+                  />
+                  <div className="flex-1 text-left">
+                    <div className="text-sm font-bold truncate">{u.displayName || u.username}</div>
+                    <div className={`text-xs ${otherId === u._id ? 'text-black/60' : 'text-gray-500'}`}>@{u.username}</div>
                   </div>
-                ))}
-                <div ref={bottomRef} />
+                </button>
+              ))}
+            </div>
+          </aside>
+
+          {/* Chat Window */}
+          <section className={`${showChat ? 'flex' : 'hidden md:flex'} flex-1 flex-col bg-[#0f161b]/30`}>
+            {!otherId ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-12 opacity-30 select-none">
+                <div className="text-6xl mb-4">💬</div>
+                <h3 className="text-lg font-bold">Your Sanctuary for Words</h3>
+                <p className="text-sm mt-2 max-w-xs">Select a creative collaborator to start a private dialogue.</p>
               </div>
-              <div className="mt-2 flex items-center gap-2">
-                <input
-                  value={text}
-                  onChange={(e)=>onTyping(e.target.value)}
-                  onKeyDown={(e)=>{ if (e.key==='Enter') { e.preventDefault(); send(); } }}
-                  placeholder="Type a message…"
-                  className="flex-1 rounded-full bg-[#0b0b0b] border border-black/40 px-4 py-2 text-sm"
-                />
-                <button onClick={send} className="px-4 py-2 rounded-md bg-[#A28DB9] text-black">Send</button>
-              </div>
-              {typingFromOther && <div className="text-xs text-[#9aa5b1] mt-1">Typing…</div>}
-            </>
-          )}
-        </section>
+            ) : (
+              <>
+                {/* Chat Header */}
+                <header className="p-4 md:p-6 border-b border-white/5 flex items-center gap-4 bg-black/20">
+                  <button onClick={() => setParams({})} className="md:hidden p-2 rounded-full hover:bg-white/10">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+                  </button>
+                  <img 
+                    src={activeUser?.avatarUrl ? (activeUser.avatarUrl.startsWith('http')?activeUser.avatarUrl:API_URL+activeUser.avatarUrl) : '/avatar.svg'} 
+                    className="w-10 h-10 rounded-full object-cover border border-white/10" 
+                    alt="Active" 
+                  />
+                  <div>
+                    <h3 className="text-sm font-bold text-white">{activeUser?.displayName || activeUser?.username}</h3>
+                    <div className="text-[10px] text-purple-400 font-bold uppercase tracking-widest">{typingFromOther ? 'Typing...' : 'Active Now'}</div>
+                  </div>
+                </header>
+
+                {/* Messages Area */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  {thread.map(m => (
+                    <div key={m._id} className={`flex ${m.from === otherId ? 'justify-start' : 'justify-end'}`}>
+                      <div className={`max-w-[80%] md:max-w-[70%] px-4 py-3 rounded-2xl shadow-xl ${m.from === otherId ? 'bg-white/5 border border-white/5 text-gray-200' : 'bg-gradient-to-br from-[#b76bff] to-[#ff6b6b] text-black font-bold'}`}>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{m.text}</p>
+                        <span className={`text-[10px] block mt-1 opacity-60 ${m.from === otherId ? '' : 'text-black'}`}>
+                          {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={bottomRef} />
+                </div>
+
+                {/* Input Area */}
+                <footer className="p-4 md:p-6 bg-black/40 border-t border-white/5">
+                  <div className="flex items-center gap-3 bg-[#0b0f14]/80 rounded-2xl p-2 border border-white/10 focus-within:border-purple-500/50 transition-all duration-300">
+                    <input
+                      value={text}
+                      onChange={(e)=>onTyping(e.target.value)}
+                      onKeyDown={(e)=>{ if (e.key==='Enter') { e.preventDefault(); send(); } }}
+                      placeholder="Enter cinematic message..."
+                      className="flex-1 bg-transparent px-4 py-2 text-sm outline-none placeholder:text-gray-600"
+                    />
+                    <button 
+                      onClick={send} 
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#ff6b6b] text-black hover:scale-105 active:scale-95 transition-all shadow-lg shadow-red-500/20"
+                    >
+                       <svg className="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                    </button>
+                  </div>
+                </footer>
+              </>
+            )}
+          </section>
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

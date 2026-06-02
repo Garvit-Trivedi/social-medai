@@ -39,12 +39,11 @@ export default function App() {
     <>
       {/* Auth route animations */}
     <AnimatePresence mode="wait">
-   <Routes location={location} key={location.pathname}>
-     <Route path="/login" element={<Auth />} />
-<Route path="/signup" element={<Auth />} />
-
-   </Routes>
-</AnimatePresence>
+      <Routes location={location}>
+        <Route path="/login" element={<Auth />} />
+        <Route path="/signup" element={<Auth />} />
+      </Routes>
+    </AnimatePresence>
 
       {/* Non-auth routes (not animated) */}
       <Routes>
