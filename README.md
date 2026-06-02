@@ -27,6 +27,12 @@ Unlike generic platforms, Pulse prioritizes visual craft, offering a "nocturnal"
 ## backend deploy link -
 https://social-medai-2lqa.onrender.com
 
+## frontend deploy link - 
+https://social-medai-nine.vercel.app/
+
+## postman documentation -
+https://documenter.getpostman.com/view/39216496/2sBXwpMWDR
+
 ---
 
 ## 📸 Screenshots
